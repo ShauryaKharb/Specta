@@ -10,7 +10,21 @@ export default class Profile extends React.Component {
       theme: 'light',
       name: 'Loading Name',
       image: '',
+      isEnabled: false,
+      emoji1: '🌞',
     }
+  }
+
+  toggleSwitch() {
+    let theme = this.state.isEnabled ? 'light' : 'dark'
+    let isEnabled = this.state.isEnabled
+    let emoji1 = this.state.isEnabled ? '🌞' : '🌜'
+
+    firebase
+      .database()
+      .ref('/users/' + firebase.auth().currentUser.uid)
+      .update({ current_theme: theme })
+    this.setState({ isEnabled: !isEnabled, emoji1: emoji1 })
   }
 
   async fetchUser() {
@@ -51,7 +65,20 @@ export default class Profile extends React.Component {
         </View>
         <View style={styles.second}>
           <Text>{this.state.name}</Text>
-          <Switch />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text>{this.state.emoji1}</Text>
+            <Switch
+              style={styles.switch}
+              onValueChange={() => this.toggleSwitch()}
+              value={this.state.isEnabled}
+            />
+          </View>
         </View>
       </View>
     )
@@ -79,5 +106,8 @@ const styles = StyleSheet.create({
     height: RFValue(40),
     width: RFValue(40),
     borderRadius: RFValue(200),
+  },
+  switch: {
+    padding: RFValue(40),
   },
 })
